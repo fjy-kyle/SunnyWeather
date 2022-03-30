@@ -14,7 +14,7 @@ class PlaceViewModel : ViewModel() {
     // 缓存界面上显示的地区Place数据
     val placeList = ArrayList<Place>()
 
-    // 用户输入关键字触发观察，发起网络请求返回与关键字相关的
+    // 用户输入关键字触发观察，发起网络请求返回与关键字相关的数据，placeLiveData改变触发观察
     val placeLiveData = Transformations.switchMap(searchLiveData) { query ->
         Repository.searchPlaces(query)
     }
@@ -23,4 +23,10 @@ class PlaceViewModel : ViewModel() {
     fun searchPlaces(query: String) {
         searchLiveData.value = query
     }
+
+    fun savePlace(place: Place) = Repository.savePlace(place)
+
+    fun getSavedPlace() = Repository.getSavedPlace()
+
+    fun isPlaceSaved() = Repository.isPlaceSaved()
 }

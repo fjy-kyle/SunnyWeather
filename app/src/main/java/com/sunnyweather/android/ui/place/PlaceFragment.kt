@@ -1,5 +1,6 @@
 package com.sunnyweather.android.ui.place
 
+import android.content.Intent
 import android.os.Bundle
 import android.text.TextWatcher
 import android.view.LayoutInflater
@@ -13,8 +14,11 @@ import androidx.lifecycle.observe
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.sunnyweather.android.R
+import com.sunnyweather.android.SunnyWeatherApplication
 import com.sunnyweather.android.logic.Place
+import com.sunnyweather.android.logic.model.Weather
 import com.sunnyweather.android.showToast
+import com.sunnyweather.android.ui.weather.WeatherActivity
 import kotlinx.android.synthetic.main.fragment_place.*
 import java.util.*
 
@@ -33,14 +37,31 @@ class PlaceFragment : Fragment() {
     ): View? {
         return inflater.inflate(R.layout.fragment_place, container,false)
     }
-    // 发起搜索城市数据请求
+
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+        // 先判断之前是否有已保存 place，有则直接跳转到 WeatherActivity
+        if (viewModel.isPlaceSaved()) {
+            val place = viewModel.getSavedPlace()
+            val placeName = place.name
+            val lng = place.location.lng
+            val lat = place.location.lat
+            val intent = Intent(SunnyWeatherApplication.context, WeatherActivity::class.java).apply {
+                putExtra("location_lng", lng)
+                putExtra("location_lat", lat)
+                putExtra("place_name", placeName)
+            }
+            startActivity(intent)
+            activity?.finish()
+            return
+        }
+
         // 配置recyclerView
         val layoutManager = LinearLayoutManager(activity)
         recyclerView.layoutManager = layoutManager
         adapter = PlaceAdapter(this,viewModel.placeList)
         recyclerView.adapter = adapter
+
         // 当搜索框的内容发生变化就获取搜索框上的新内容,否则隐藏RecyclerView,而只显示图片
         searchPlaceEdit.addTextChangedListener {
             val query = it.toString()
