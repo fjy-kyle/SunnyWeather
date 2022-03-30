@@ -95,6 +95,7 @@ class WeatherActivity : AppCompatActivity() {
             skyIcon.setImageResource(sky.icon)
             skyInfo.text = sky.info
             temperatureInfo.text = "${temperature.min.toInt()} ~ ${temperature.max.toInt()} ℃"
+            // 将设置好属性的 view 添加到 forecastLayout 中
             forecastLayout.addView(view)
         }
 
