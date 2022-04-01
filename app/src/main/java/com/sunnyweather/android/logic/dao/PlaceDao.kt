@@ -15,7 +15,6 @@ object PlaceDao {
         }
     }
 
-
     // 取出place ，(place)String 转成 (place)Json
     fun getSavedPlace(): Place {
         val placeJson = sharedPreferences().getString("place", "")
@@ -24,7 +23,6 @@ object PlaceDao {
 
     // 判断是否有数据已保存
     fun isPlaceSaved() = sharedPreferences().contains("place")
-
 
     private fun sharedPreferences() = SunnyWeatherApplication.context.
             getSharedPreferences("sunny_weather",0)

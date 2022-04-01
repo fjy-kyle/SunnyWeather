@@ -10,6 +10,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import java.lang.Exception
 import java.lang.RuntimeException
+import kotlin.concurrent.thread
 import kotlin.coroutines.CoroutineContext
 
 // 仓库层的统一封装入口
@@ -66,7 +67,7 @@ object Repository {
             emit(result)
         }
 
-    fun savePlace(place: Place) = PlaceDao.savePlace(place)
+    fun savePlace(place: Place)= PlaceDao.savePlace(place)
 
     fun getSavedPlace() = PlaceDao.getSavedPlace()
 

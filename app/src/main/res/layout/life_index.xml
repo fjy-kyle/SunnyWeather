@@ -50,7 +50,7 @@
                     android:orientation="vertical">
 
                     <TextView
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textSize="12sp"
                         android:text="感冒" />
@@ -88,7 +88,7 @@
                     android:orientation="vertical">
 
                     <TextView
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textSize="12sp"
                         android:text="穿衣" />
@@ -130,23 +130,23 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
-                        android:layout_toEndOf="@+id/ultravioletImg"
                         android:layout_marginStart="20dp"
+                        android:layout_toEndOf="@+id/ultravioletImg"
                         android:orientation="vertical">
 
                         <TextView
-                            android:layout_width="match_parent"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textSize="12sp"
-                            android:text="实时紫外线" />
+                            android:text="实时紫外线"
+                            android:textSize="12sp" />
 
                         <TextView
                             android:id="@+id/ultravioletText"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="4dp"
-                            android:textSize="16dp"
-                            android:textColor="?android:attr/textColorPrimary"/>
+                            android:textColor="?android:attr/textColorPrimary"
+                            android:textSize="16dp" />
                     </LinearLayout>
 
                 </RelativeLayout>
@@ -173,7 +173,7 @@
                         android:orientation="vertical">
 
                         <TextView
-                            android:layout_width="match_parent"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textSize="12sp"
                             android:text="洗车" />

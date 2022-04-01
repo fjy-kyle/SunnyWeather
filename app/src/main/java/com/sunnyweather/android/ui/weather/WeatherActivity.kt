@@ -1,14 +1,19 @@
 package com.sunnyweather.android.ui.weather
 
+import android.content.Context
 import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.view.GravityCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.observe
 import com.sunnyweather.android.R
@@ -30,14 +35,13 @@ class WeatherActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // 背景图与状态栏融合实现
+        // 背景图与状态栏融合实现-----------------------------------------------------------------------
         val decorView = window.decorView
         decorView.systemUiVisibility =
             View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
         window.statusBarColor = Color.TRANSPARENT
-
         setContentView(R.layout.activity_weather)
-        // 取出从主页传递过来的经纬度和地区名
+        // 取出从主页传递过来的经纬度和地区名--------------------------------------------------------------
         if (viewModel.locationLng.isEmpty()) {
             viewModel.locationLng = intent.getStringExtra("location_lng") ?: ""
         }
@@ -47,7 +51,7 @@ class WeatherActivity : AppCompatActivity() {
         if (viewModel.placeName.isEmpty()) {
             viewModel.placeName = intent.getStringExtra("place_name") ?: ""
         }
-
+        // weatherLiveData回调 ----------------------------------------------------------------------
         viewModel.weatherLiveData.observe(this) { result ->
             val weather = result.getOrNull()
             // 不为空则说明网络请求成功返回数据，并动态加载布局
@@ -57,9 +61,43 @@ class WeatherActivity : AppCompatActivity() {
                 "无法成功获取天气信息".showToast()
                 result.exceptionOrNull()?.printStackTrace()
             }
+            // 刷新事件结束，隐藏刷新进度条
+            swipeRefresh.isRefreshing = false
         }
-        // 跳转到weatherActivity就传参给viewModel触发观察
-        viewModel.refreshWeather(viewModel.locationLng,viewModel.locationLat)
+
+        // 刚跳转到weatherActivity就刷新数据 ----------------------------------------------------------
+        swipeRefresh.setColorSchemeResources(R.color.colorPrimary)
+        refreshWeather()
+        swipeRefresh.setOnRefreshListener {
+            refreshWeather()
+        }
+
+        // 滑动菜单逻辑实现 ---------------------------------------------------------------------------
+        navBtn.setOnClickListener {
+            drawerLayout.openDrawer(GravityCompat.START)
+        }
+        // 滑动菜单隐藏同时要隐藏输入法
+        drawerLayout.addDrawerListener(object : DrawerLayout.DrawerListener {
+            override fun onDrawerStateChanged(newState: Int) {}
+
+            override fun onDrawerSlide(drawerView: View, slideOffset: Float) {}
+
+            override fun onDrawerOpened(drawerView: View) {}
+
+            override fun onDrawerClosed(drawerView: View) {
+                val maneger = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                maneger.hideSoftInputFromWindow(drawerView.windowToken,InputMethodManager.HIDE_NOT_ALWAYS)
+            }
+        })
+    }
+
+    /*刷新Weather天气数据
+    * 注意当第一次调用 viewModel.refreshWeather 时不会立刻回调到 weatherLiveData.observe()
+    * 而是先执行完 viewModel.refreshWeather 后续代码才会回调到 observe
+    */
+    fun refreshWeather() {
+        viewModel.refreshWeather(viewModel.locationLng, viewModel.locationLat)
+        swipeRefresh.isRefreshing = true
     }
 
     // 动态加载activity_weather中的布局

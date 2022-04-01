@@ -13,6 +13,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.observe
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.sunnyweather.android.MainActivity
 import com.sunnyweather.android.R
 import com.sunnyweather.android.SunnyWeatherApplication
 import com.sunnyweather.android.logic.Place
@@ -29,7 +30,7 @@ class PlaceFragment : Fragment() {
 
     private lateinit var adapter: PlaceAdapter
 
-    // 加载fragment_place布局
+    // 加载fragment_place布局 -----------------------------------------------------------------------
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -40,8 +41,14 @@ class PlaceFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        // 先判断之前是否有已保存 place，有则直接跳转到 WeatherActivity
-        if (viewModel.isPlaceSaved()) {
+        // 先判断之前是否有已保存 place，有则直接跳转到 WeatherActivity -----------------------------------
+        /* 注意！由于之前已经加入判断place跳转，现又在weather中加入了PlaceFragment
+           所以在构造 activity_weather.xml 时又会构造PlaceFragment 而造成无限跳转bug
+           因此需加上 activity is MainActivity 逻辑判断
+           只有第一次 PlaceFragment 被嵌入 MainActivity 中才会跳转
+         */
+
+        if (activity is MainActivity && viewModel.isPlaceSaved()) {
             val place = viewModel.getSavedPlace()
             val placeName = place.name
             val lng = place.location.lng
@@ -56,7 +63,7 @@ class PlaceFragment : Fragment() {
             return
         }
 
-        // 配置recyclerView
+        // 配置recyclerView ------------------------------------------------------------------------
         val layoutManager = LinearLayoutManager(activity)
         recyclerView.layoutManager = layoutManager
         adapter = PlaceAdapter(this,viewModel.placeList)
